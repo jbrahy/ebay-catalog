@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="{{ seller.tagline or 'Quality eBay listings' }}">
+    <title>{% block title %}{{ site.title }}{% endblock %}</title>
+    <link rel="stylesheet" href="{{ base_path }}static/css/styles.css">
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+    <header class="site-header">
+        <div class="container">
+            <div class="header-content">
+                {% if seller.logo %}
+                <div class="logo">
+                    <img src="{{ base_path }}{{ seller.logo }}" alt="{{ seller.display_name }} logo">
+                </div>
+                {% endif %}
+                <div class="header-text">
+                    <h1><a href="{{ base_path }}index.html">{{ seller.display_name }}</a></h1>
+                    {% if seller.tagline %}
+                    <p class="tagline">{{ seller.tagline }}</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <nav class="main-nav">
+                <a href="{{ base_path }}index.html" class="nav-link{% if current_page == 'home' %} active{% endif %}">Home</a>
+                {% for category in categories %}
+                <a href="{{ base_path }}category/{{ category.slug }}.html"
+                   class="nav-link{% if current_category == category.slug %} active{% endif %}">
+                    {{ category.name }} <span class="count">({{ category.item_count }})</span>
+                </a>
+                {% endfor %}
+            </nav>
+        </div>
+    </header>
+
+    <main class="site-main">
+        <div class="container">
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <p>
+                Last updated: {{ generated_at_formatted }}
+                {% if seller.contact_email %}
+                | <a href="mailto:{{ seller.contact_email }}">Contact</a>
+                {% endif %}
+            </p>
+            <p class="disclaimer">
+                All items are sold through eBay. Clicking "View on eBay" takes you to the official eBay listing.
+            </p>
+        </div>
+    </footer>
+
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}{{ category.name }} - {{ site.title }}{% endblock %}
+
+{% block content %}
+<nav class="breadcrumb">
+    <a href="{{ base_path }}index.html">Home</a> &raquo; {{ category.name }}
+</nav>
+
+<section class="category-header">
+    <h2>{{ category.name }}</h2>
+    <p class="item-count">{{ category.item_count }} items</p>
+</section>
+
+<section class="items-section">
+    <div class="items-grid">
+        {% for item in items %}
+        {% include "item_card.html" %}
+        {% endfor %}
+    </div>
+
+    {% if has_pagination %}
+    <nav class="pagination">
+        {% if page > 1 %}
+        <a href="{{ category.slug }}-page{{ page - 1 }}.html" class="pagination-link">&laquo; Previous</a>
+        {% endif %}
+
+        <span class="pagination-info">Page {{ page }} of {{ total_pages }}</span>
+
+        {% if page < total_pages %}
+        <a href="{{ category.slug }}-page{{ page + 1 }}.html" class="pagination-link">Next &raquo;</a>
+        {% endif %}
+    </nav>
+    {% endif %}
+</section>
+{% endblock %}

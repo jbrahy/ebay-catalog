@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}{{ site.title }} - {{ seller.tagline }}{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <h2>Welcome to {{ seller.display_name }}</h2>
+    <p class="hero-tagline">{{ seller.tagline }}</p>
+    <div class="stats">
+        <div class="stat">
+            <span class="stat-number">{{ total_items }}</span>
+            <span class="stat-label">Active Listings</span>
+        </div>
+        <div class="stat">
+            <span class="stat-number">{{ categories|length }}</span>
+            <span class="stat-label">Categories</span>
+        </div>
+    </div>
+</section>
+
+<section class="categories-section">
+    <h3>Browse by Category</h3>
+    <div class="category-grid">
+        {% for category in categories %}
+        <a href="category/{{ category.slug }}.html" class="category-card">
+            <h4>{{ category.name }}</h4>
+            <p class="category-count">{{ category.item_count }} items</p>
+        </a>
+        {% endfor %}
+    </div>
+</section>
+
+{% if recent_items %}
+<section class="recent-items-section">
+    <h3>Recently Listed</h3>
+    <div class="items-grid">
+        {% for item in recent_items %}
+        {% include "item_card.html" %}
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+{% endblock %}

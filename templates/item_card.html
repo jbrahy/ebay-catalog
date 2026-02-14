@@ -1,0 +1,62 @@
+<article class="item-card">
+    <div class="item-image">
+        <img src="{{ item.primary_image }}"
+             alt="{{ item.title }}"
+             loading="lazy">
+
+        {% if item.is_auction %}
+        <span class="badge badge-auction">Auction</span>
+        {% endif %}
+
+        {% if item.is_best_offer %}
+        <span class="badge badge-offer">Best Offer</span>
+        {% endif %}
+    </div>
+
+    <div class="item-details">
+        <h4 class="item-title">{{ item.title }}</h4>
+
+        <div class="item-meta">
+            {% if item.condition %}
+            <span class="badge badge-condition badge-{{ item.condition|lower|replace(' ', '-') }}">
+                {{ item.condition }}
+            </span>
+            {% endif %}
+        </div>
+
+        <div class="item-price">
+            {% if item.is_auction and item.current_bid %}
+            <span class="price-label">Current Bid:</span>
+            <span class="price">${{ "%.2f"|format(item.current_bid.value) }}</span>
+            {% else %}
+            <span class="price">${{ "%.2f"|format(item.price.value) }}</span>
+            {% endif %}
+        </div>
+
+        {% if show_shipping %}
+        <div class="item-shipping">
+            {% if item.shipping_type == 'FREE' or (item.shipping_cost and item.shipping_cost.value == 0) %}
+            <span class="shipping-free">Free Shipping</span>
+            {% elif item.shipping_cost %}
+            <span class="shipping-cost">
+                + ${{ "%.2f"|format(item.shipping_cost.value) }} shipping
+            </span>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        {% if item.is_auction and item.item_end_date and show_time_remaining %}
+        <div class="item-time-remaining" data-end-date="{{ item.item_end_date }}">
+            <span class="time-label">Ends:</span>
+            <span class="time-value">{{ item.item_end_date[:10] }}</span>
+        </div>
+        {% endif %}
+
+        <a href="{{ item.item_url }}"
+           target="_blank"
+           rel="noopener noreferrer"
+           class="btn btn-primary">
+            View on eBay
+        </a>
+    </div>
+</article>

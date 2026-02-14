@@ -1,0 +1,120 @@
+# eBay Catalog Builder - Configuration File
+# Copy this file to config.yaml and fill in your details
+
+# ==============================================
+# eBay API Credentials
+# ==============================================
+# Get your credentials from: https://developer.ebay.com/my/keys
+ebay:
+  # Your App ID (Client ID) from eBay Developer Program
+  app_id: "YOUR_APP_ID_HERE"
+
+  # Your Cert ID (Client Secret) from eBay Developer Program
+  cert_id: "YOUR_CERT_ID_HERE"
+
+  # Environment: PRODUCTION or SANDBOX
+  # Use SANDBOX for testing, PRODUCTION for live data
+  environment: "PRODUCTION"
+
+  # Marketplace ID determines which eBay site to use
+  # Options: EBAY_US, EBAY_GB, EBAY_AU, EBAY_DE, EBAY_FR, EBAY_IT, EBAY_ES, EBAY_CA
+  marketplace: "EBAY_US"
+
+# ==============================================
+# Seller Configuration
+# ==============================================
+seller:
+  # eBay seller username (required)
+  username: "your_ebay_username"
+
+  # Display name shown on the site (optional, defaults to username)
+  display_name: "John's Deals"
+
+  # Tagline/subtitle displayed on homepage (optional)
+  tagline: "Quality finds at great prices"
+
+  # Path to logo image relative to static/ directory (optional)
+  # Place your logo in static/images/logo.png
+  logo: "images/logo.png"
+
+  # Contact email displayed in footer (optional)
+  contact_email: ""
+
+# ==============================================
+# Site Configuration
+# ==============================================
+site:
+  # Site title for HTML <title> tag
+  title: "John's Deals"
+
+  # Base URL for canonical URLs and sitemap
+  # Used for SEO - should match your deployment domain
+  base_url: "https://johnsdeals.com"
+
+  # Number of items to show per category page before pagination
+  items_per_page: 24
+
+  # Display options - show/hide various item details
+  show_price: true
+  show_shipping: true
+  show_condition: true
+  show_time_remaining: true  # Show countdown for auction items
+
+  # eBay Partner Network (EPN) affiliate campaign ID (optional)
+  # If set, all eBay links will include affiliate tracking
+  # Sign up at: https://partnernetwork.ebay.com/
+  affiliate_campaign_id: ""
+
+# ==============================================
+# Category Configuration
+# ==============================================
+categories:
+  # Custom order for category display (optional)
+  # Categories listed here appear first in the specified order
+  # Remaining categories appear alphabetically after these
+  custom_order:
+    - "Electronics"
+    - "Collectibles"
+    - "Home & Garden"
+    - "Toys & Hobbies"
+
+  # Categories to hide from catalog (optional)
+  # Items in these categories will not appear on the site
+  hidden: []
+
+# ==============================================
+# Build Configuration
+# ==============================================
+build:
+  # Directory where generated site will be placed
+  output_dir: "output"
+
+  # Directory for caching API responses
+  cache_dir: ".cache"
+
+  # How long to cache API responses (in minutes)
+  # Set to 0 to disable caching (not recommended - wastes API calls)
+  cache_ttl_minutes: 15
+
+  # Download item images locally vs hotlinking to eBay's CDN
+  # false (recommended): Fast builds, hotlink to eBay images
+  # true: Slower builds, images stored locally for offline viewing
+  download_images: false
+
+  # Generate sitemap.xml for SEO
+  generate_sitemap: true
+
+# ==============================================
+# Deploy Configuration (Optional)
+# ==============================================
+deploy:
+  # Deployment method: "none", "s3", or "rsync"
+  method: "none"
+
+  # S3 deployment settings (if method: "s3")
+  s3_bucket: ""
+  s3_region: "us-east-1"
+
+  # Rsync deployment settings (if method: "rsync")
+  # Example: "user@example.com:/var/www/catalog"
+  rsync_target: ""
