@@ -114,7 +114,11 @@ deploy:
   # S3 deployment settings (if method: "s3")
   s3_bucket: ""
   s3_region: "us-east-1"
+  # Optional: CloudFront distribution ID for cache invalidation
+  cloudfront_distribution_id: ""
 
   # Rsync deployment settings (if method: "rsync")
   # Example: "user@example.com:/var/www/catalog"
   rsync_target: ""
+  # Optional: Additional rsync flags
+  # rsync_flags: ["-e", "ssh -i ~/.ssh/mykey.pem"]

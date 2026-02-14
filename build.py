@@ -25,6 +25,7 @@ sys.path.insert(0, str(Path(__file__).parent / "src"))
 from ebay_client import EbayClient
 from catalog_builder import CatalogBuilder
 from site_generator import SiteGenerator
+from deploy import deploy_site
 
 
 # Set up logging
@@ -160,8 +161,12 @@ def build_catalog(args: argparse.Namespace) -> None:
 
             # Deploy if configured and not disabled
             if not args.no_deploy and config.get('deploy', {}).get('method') != 'none':
-                logger.info("Deployment configured but not yet implemented")
-                # TODO: Implement deployment
+                logger.info("Deploying site...")
+                deploy_success = deploy_site(config.get('deploy', {}), output_dir)
+                if deploy_success:
+                    logger.info("✓ Deployment completed successfully")
+                else:
+                    logger.warning("⚠ Deployment failed (site generated but not deployed)")
         else:
             logger.info("Skipping site generation (dry run)")
 
