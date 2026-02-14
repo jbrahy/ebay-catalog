@@ -2,6 +2,24 @@
 
 A Python-based static site generator that creates a clean, responsive catalog website from any eBay seller's active listings. Perfect for sellers who want a standalone website showcasing their inventory without building custom integrations.
 
+## Quick Start
+
+```bash
+git clone https://github.com/jbrahy/ebay-catalog.git
+cd ebay-catalog
+python3 -m venv venv && venv/bin/pip install -r requirements.txt
+
+# Validate setup
+venv/bin/python3 validate-setup.py
+
+# Configure
+cp config/config.example.yaml config/config.yaml
+# Edit config/config.yaml with your eBay API credentials
+
+# Build
+./catalog-build.sh
+```
+
 ## Features
 
 - **Static Site Generation**: Generates pure HTML/CSS that can be hosted anywhere (S3, CloudFront, Nginx, GitHub Pages)
@@ -33,12 +51,22 @@ The generated site includes:
 
 ```bash
 # Clone the repository
-git clone <your-repo-url>
+git clone https://github.com/jbrahy/ebay-catalog.git
 cd ebay-catalog
+
+# Create virtual environment
+python3 -m venv venv
+
+# Activate virtual environment
+source venv/bin/activate  # On macOS/Linux
+# OR
+venv\Scripts\activate     # On Windows
 
 # Install dependencies
 pip install -r requirements.txt
 ```
+
+**Note**: All commands below assume you've activated the virtual environment. If not activated, use `venv/bin/python3` instead of `python`.
 
 ### 3. Get eBay API Credentials
 
@@ -89,10 +117,27 @@ See `config/config.example.yaml` for all available options.
 # Generate the catalog site
 python build.py
 
+# Or if venv not activated:
+venv/bin/python3 build.py
+
 # The static site will be generated in the 'output/' directory
 ```
 
-### 6. View Locally
+### 6. Validate Setup (Optional)
+
+Before building, you can validate your setup:
+
+```bash
+venv/bin/python3 validate-setup.py
+```
+
+This checks:
+- Python version compatibility
+- Required modules are installed
+- Project structure is complete
+- Configuration file exists and is valid
+
+### 7. View Locally
 
 Open `output/index.html` in your web browser to preview your catalog.
 
@@ -101,24 +146,30 @@ Open `output/index.html` in your web browser to preview your catalog.
 ### Basic Commands
 
 ```bash
-# Build with default config
+# Build with default config (using convenience script)
+./catalog-build.sh
+
+# Or activate venv and use python directly
+source venv/bin/activate
 python build.py
 
 # Use custom config file
-python build.py --config config/sellers/myshop.yaml
+./catalog-build.sh --config config/sellers/myshop.yaml
 
 # Force refresh from API (ignore cache)
-python build.py --force-refresh
+./catalog-build.sh --force-refresh
 
 # Dry run (fetch data but don't generate site)
-python build.py --dry-run
+./catalog-build.sh --dry-run
 
 # Skip deployment step
-python build.py --no-deploy
+./catalog-build.sh --no-deploy
 
 # Enable verbose logging
-python build.py --verbose
+./catalog-build.sh --verbose
 ```
+
+**Tip**: The `catalog-build.sh` script automatically uses the virtual environment, so you don't need to activate it first.
 
 ### Configuration Options
 
@@ -142,10 +193,13 @@ To keep your catalog up-to-date, set up a cron job:
 crontab -e
 
 # Add line to refresh every 15 minutes
-*/15 * * * * cd /path/to/ebay-catalog && /usr/bin/python3 build.py >> /var/log/ebay-catalog.log 2>&1
+*/15 * * * * cd /path/to/ebay-catalog && ./catalog-build.sh >> /var/log/ebay-catalog.log 2>&1
 
 # Or refresh every hour
-0 * * * * cd /path/to/ebay-catalog && /usr/bin/python3 build.py >> /var/log/ebay-catalog.log 2>&1
+0 * * * * cd /path/to/ebay-catalog && ./catalog-build.sh >> /var/log/ebay-catalog.log 2>&1
+
+# Or using venv python directly
+*/15 * * * * cd /path/to/ebay-catalog && venv/bin/python3 build.py >> /var/log/ebay-catalog.log 2>&1
 ```
 
 ## Deployment Options
