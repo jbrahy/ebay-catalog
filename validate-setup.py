@@ -3,8 +3,27 @@
 Setup validation script - checks if everything is configured correctly.
 """
 
+import os
 import sys
 from pathlib import Path
+
+# Auto-detect and use venv if not already running from it
+def ensure_venv():
+    """Check if running from venv, and re-exec with venv python if available."""
+    # Check if we're already in a virtual environment
+    if hasattr(sys, 'real_prefix') or (hasattr(sys, 'base_prefix') and sys.base_prefix != sys.prefix):
+        return  # Already in venv
+
+    # Check if venv exists in project directory
+    script_dir = Path(__file__).parent
+    venv_python = script_dir / 'venv' / 'bin' / 'python3'
+
+    if venv_python.exists():
+        # Re-execute this script with venv python
+        os.execv(str(venv_python), [str(venv_python)] + sys.argv)
+    # If no venv exists, continue with system python (will show errors)
+
+ensure_venv()
 
 def validate_setup():
     """Validate that the environment is set up correctly."""
