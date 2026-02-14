@@ -26,6 +26,7 @@ from ebay_client import EbayClient
 from catalog_builder import CatalogBuilder
 from site_generator import SiteGenerator
 from deploy import deploy_site
+from demo_data import generate_demo_items, get_demo_seller_info
 
 
 # Set up logging
@@ -109,30 +110,39 @@ def build_catalog(args: argparse.Namespace) -> None:
         template_dir = project_root / 'templates'
         static_dir = project_root / 'static'
 
-        # Initialize eBay client
-        logger.info("Initializing eBay API client")
-        client = EbayClient(
-            app_id=ebay_config['app_id'],
-            cert_id=ebay_config['cert_id'],
-            environment=ebay_config.get('environment', 'PRODUCTION'),
-            marketplace=ebay_config.get('marketplace', 'EBAY_US'),
-            cache_dir=cache_dir,
-            cache_ttl_minutes=build_config.get('cache_ttl_minutes', 15),
-            affiliate_campaign_id=site_config.get('affiliate_campaign_id')
-        )
+        # Demo mode check
+        if args.demo:
+            logger.info("DEMO MODE - Using generated sample data (no eBay API calls)")
+            items = generate_demo_items(count=40)
+            api_calls_made = 0
+            # Override seller info for demo
+            seller_config = get_demo_seller_info()
+        else:
+            # Initialize eBay client
+            logger.info("Initializing eBay API client")
+            client = EbayClient(
+                app_id=ebay_config['app_id'],
+                cert_id=ebay_config['cert_id'],
+                environment=ebay_config.get('environment', 'PRODUCTION'),
+                marketplace=ebay_config.get('marketplace', 'EBAY_US'),
+                cache_dir=cache_dir,
+                cache_ttl_minutes=build_config.get('cache_ttl_minutes', 15),
+                affiliate_campaign_id=site_config.get('affiliate_campaign_id')
+            )
+
+            # Fetch all seller items
+            logger.info(f"Fetching items for seller: {seller_config['username']}")
+            items = client.get_all_seller_items(
+                seller_username=seller_config['username'],
+                force_refresh=args.force_refresh
+            )
+            api_calls_made = client.api_calls_made
 
         # Dry run check
         if args.dry_run:
             logger.info("DRY RUN MODE - will not write output")
 
-        # Fetch all seller items
-        logger.info(f"Fetching items for seller: {seller_config['username']}")
-        items = client.get_all_seller_items(
-            seller_username=seller_config['username'],
-            force_refresh=args.force_refresh
-        )
-
-        logger.info(f"API calls made: {client.api_calls_made}")
+        logger.info(f"API calls made: {api_calls_made}")
 
         if not items:
             logger.warning("No items found for seller")
@@ -175,12 +185,14 @@ def build_catalog(args: argparse.Namespace) -> None:
         logger.info("=" * 60)
         logger.info("BUILD SUMMARY")
         logger.info("=" * 60)
-        logger.info(f"Seller: {seller_config.get('display_name', seller_config['username'])}")
+        logger.info(f"Seller: {seller_config.get('display_name', seller_config.get('username', 'Unknown'))}")
         logger.info(f"Total items: {catalog['total_items']}")
         logger.info(f"Categories: {len(catalog['categories'])}")
-        logger.info(f"API calls made: {client.api_calls_made}")
+        logger.info(f"API calls made: {api_calls_made}")
         logger.info(f"Output directory: {output_dir}")
         logger.info(f"Time elapsed: {elapsed:.2f} seconds")
+        if args.demo:
+            logger.info(f"Demo mode: Generated {catalog['total_items']} sample items")
         logger.info("=" * 60)
 
         if not args.dry_run:
@@ -200,6 +212,7 @@ def main():
         epilog="""
 Examples:
   %(prog)s                                    # Use default config
+  %(prog)s --demo                            # Generate demo site with sample data
   %(prog)s --config sellers/shop1.yaml       # Use custom config
   %(prog)s --force-refresh                   # Ignore cache, fetch fresh data
   %(prog)s --dry-run                         # Test without writing output
@@ -229,6 +242,12 @@ Examples:
         '--dry-run',
         action='store_true',
         help='Fetch and build catalog but do not write output or deploy'
+    )
+
+    parser.add_argument(
+        '--demo',
+        action='store_true',
+        help='Use demo mode with generated sample data (no eBay API required)'
     )
 
     parser.add_argument(

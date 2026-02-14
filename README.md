@@ -9,14 +9,13 @@ git clone https://github.com/jbrahy/ebay-catalog.git
 cd ebay-catalog
 python3 -m venv venv && venv/bin/pip install -r requirements.txt
 
-# Validate setup
-venv/bin/python3 validate-setup.py
+# Try demo mode first (no eBay account needed!)
+./catalog-build.sh --demo
+open output/index.html  # View the demo catalog
 
-# Configure
+# For real eBay data:
 cp config/config.example.yaml config/config.yaml
 # Edit config/config.yaml with your eBay API credentials
-
-# Build
 ./catalog-build.sh
 ```
 
@@ -146,6 +145,9 @@ Open `output/index.html` in your web browser to preview your catalog.
 ### Basic Commands
 
 ```bash
+# Demo mode - generate sample catalog (no eBay API needed)
+./catalog-build.sh --demo
+
 # Build with default config (using convenience script)
 ./catalog-build.sh
 
@@ -170,6 +172,22 @@ python build.py
 ```
 
 **Tip**: The `catalog-build.sh` script automatically uses the virtual environment, so you don't need to activate it first.
+
+### Demo Mode
+
+Waiting for eBay developer approval? Use **demo mode** to generate a fully-functional sample catalog:
+
+```bash
+./catalog-build.sh --demo
+```
+
+This creates a complete catalog with 40 sample items across 4 categories:
+- ✅ No eBay API credentials required
+- ✅ Perfect for testing deployment pipelines
+- ✅ See what your catalog will look like
+- ✅ Test customization and styling changes
+
+The generated demo site is production-ready HTML that you can deploy anywhere to preview the layout and design.
 
 ### Configuration Options
 

@@ -56,7 +56,7 @@ class SiteGenerator:
         )
 
         # Add custom filters
-        self.jinja_env.filters['format'] = lambda value, fmt: fmt % value
+        self.jinja_env.filters['format'] = lambda fmt, value: fmt % value
 
     def generate_site(self, catalog: Dict[str, Any]) -> None:
         """
